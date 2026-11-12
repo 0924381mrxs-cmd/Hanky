@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حنكك (Hanakak) - مجتمعك السوداني الأصيل</title>
+    <!-- تحميل خطوط Cairo و Tajawal و Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تحميل أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
+                        en: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        nile: {
+                            50: '#f0f6fc',
+                            100: '#deebf8',
+                            500: '#1665a8',
+                            600: '#0F4C81',
+                            700: '#0a365c',
+                            900: '#062038',
+                        },
+                        desert: {
+                            100: '#fef3c7',
+                            400: '#fbbf24',
+                            500: '#D97706',
+                            600: '#b45309',
+                        },
+                        terracotta: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#C2410C',
+                            600: '#9a3412',
+                        },
+                        ivory: {
+                            50: '#FAF8F5',
+                            100: '#F8F5F0',
+                            200: '#EFEAE1',
+                        },
+                        ink: '#1E242B',
+                        muted: '#5C6672',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', 'Tajawal', sans-serif; background-color: #FAF8F5; color: #1E242B; overflow-x: hidden; }
+        .nubian-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%230F4C81' stroke-opacity='0.045' stroke-width='1.2'%3E%3Cpath d='M30 0L60 30L30 60L0 30z'/%3E%3Cpath d='M30 12L48 30L30 48L12 30z'/%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .nubian-border-top { background-image: repeating-linear-gradient(90deg, #0F4C81 0px, #0F4C81 12px, #D97706 12px, #D97706 20px, #C2410C 20px, #C2410C 28px, #FAF8F5 28px, #FAF8F5 32px); height: 4px; }
+        .sudanese-story-ring { background: linear-gradient(135deg, #D97706 0%, #C2410C 50%, #0F4C81 100%); padding: 3px; }
+        .loading-dot { animation: dotBounce 1.4s infinite ease-in-out both; }
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dot:nth-child(3) { animation-delay: 0s; }
+        .loading-dot:nth-child(4) { animation-delay: 0.16s; }
+        .loading-dot:nth-child(5) { animation-delay: 0.32s; }
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.7); background-color: #DCD5C9; } 
+            40% { transform: scale(1.2); background-color: #D97706; }
+        }
+        .screen-transition { transition: opacity 0.45s ease, transform 0.45s ease; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D6CFC2; border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-desert-500 selection:text-white nubian-pattern">
+
+    <!-- شريط المعاينة العلوي -->
+    <div id="previewControls" class="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-full shadow-sm border border-ivory-200 text-xs transition-opacity duration-300">
+        <button type="button" onclick="replaySplash()" class="px-3 py-1.5 rounded-full bg-nile-600 text-white font-semibold hover:bg-nile-700 transition">إعادة التشغيل ↻</button>
+    </div>
+
+    <!-- 1. شاشة البداية (SPLASH SCREEN) -->
+    <main id="splashScreen" class="screen-transition flex flex-col items-center justify-between py-10 px-6 w-full min-h-screen bg-ivory-50 nubian-pattern select-none relative">
+        <div class="fixed top-0 inset-x-0 nubian-border-top"></div>
+        <div class="h-12"></div>
+        <div class="flex flex-col items-center justify-center my-auto w-full max-w-sm">
+            <div id="logoContainer" class="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-nile-600 to-nile-900 rounded-full shadow-xl shadow-nile-600/25 ring-4 ring-desert-500/30 cursor-pointer" onclick="replaySplash()">
+                <div class="absolute inset-2 rounded-full border border-desert-400/30 pointer-events-none"></div>
+                <svg class="w-12 h-12 sm:w-14 sm:h-14 text-white fill-current relative z-10" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 16C22 13.7909 23.7909 12 26 12H36C38.2091 12 40 13.7909 40 16V41H60V16C60 13.7909 61.7909 12 64 12H74C76.2091 12 78 13.7909 78 16V84C78 86.2091 76.2091 88 74 88H64C61.7909 88 60 86.2091 60 84V57H40V84C40 86.2091 38.2091 88 36 88H26C23.7909 88 22 86.2091 22 84V16Z"/>
+                </svg>
+            </div>
+            <div class="mt-4 text-center">
+                <h1 class="text-2xl font-black text-nile-600 tracking-tight">حنكك</h1>
+                <p class="text-xs text-muted font-semibold mt-0.5">حلة واحدة.. ونسة ما بتخلص</p>
+            </div>
+            <div class="mt-8 h-16 flex flex-col items-center justify-center w-full">
+                <div id="loadingIndicator" class="flex items-center justify-center gap-2.5 transition-opacity duration-300">
+                    <span class="loading-dot w-2.5 h-2.5 rounded-full"></span>
+                    <span class="loading-dot w-2.5 h-2.5 rounded-full"></span>
+                    <span class="loading-dot w-2.5 h-2.5 rounded-full"></span>
+                    <span class="loading-dot w-2.5 h-2.5 rounded-full"></span>
+                    <span class="loading-dot w-2.5 h-2.5 rounded-full"></span>
+                </div>
+                <div id="actionArea" class="hidden flex-col items-center w-full">
+                    <button type="button" onclick="enterLoginScreen()" class="w-full sm:w-64 py-3.5 px-6 bg-gradient-to-l from-nile-600 to-nile-700 hover:from-nile-700 hover:to-nile-900 text-white font-bold text-base rounded-full shadow-lg shadow-nile-600/25 border border-desert-400/30 transition-all flex items-center justify-center gap-2">
+                        <span>المتابعة إلى التطبيق</span>
+                        <svg class="w-5 h-5 rtl:rotate-180 text-desert-400" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <footer class="flex flex-col items-center justify-center text-center pb-2">
+            <span class="text-xs text-muted font-medium mb-1">مدعوم من</span>
+            <div class="flex items-center gap-1.5 text-nile-600 font-en font-bold text-lg">
+                <svg class="w-6 h-6 text-desert-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z"/></svg>
+                <span>H-Connect</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- 2. شاشة تسجيل الدخول / إنشاء حساب (مع Firebase Auth) -->
+    <section id="loginScreen" class="hidden screen-transition opacity-0 translate-y-4 min-h-screen bg-ivory-100 nubian-pattern flex flex-col items-center justify-center p-4 relative">
+        <div class="fixed top-0 inset-x-0 nubian-border-top"></div>
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-ivory-200">
+            <div class="nubian-border-top"></div>
+            <div class="p-6 sm:p-8">
+                <div class="flex flex-col items-center text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-nile-600 to-nile-900 rounded-2xl rotate-3 flex items-center justify-center shadow-lg shadow-nile-600/20 ring-2 ring-desert-500/40 mb-3">
+                        <svg class="w-8 h-8 text-white fill-current -rotate-3" viewBox="0 0 100 100"><path d="M22 16C22 13.7909 23.7909 12 26 12H36C38.2091 12 40 13.7909 40 16V41H60V16C60 13.7909 61.7909 12 64 12H74C76.2091 12 78 13.7909 78 16V84C78 86.2091 76.2091 88 74 88H64C61.7909 88 60 86.2091 60 84V57H40V84C40 86.2091 38.2091 88 36 88H26C23.7909 88 22 86.2091 22 84V16Z"/></svg>
+                    </div>
+                    <h1 class="text-2xl font-extrabold text-nile-600">حبابك عشرة في حنكك 🇸🇩</h1>
+                    <p class="text-sm text-muted mt-1">سجل دخولك بالإيميل وكلمة المرور الحقيقية</p>
+                </div>
+
+                <!-- نموذج تسجيل الدخول -->
+                <form id="loginForm" onsubmit="handleFirebaseLogin(event)" class="space-y-4">
+                    <div>
+                        <input type="email" id="loginEmail" required placeholder="البريد الإلكتروني (user@gmail.com)" 
+                            class="w-full px-4 py-3.5 rounded-2xl bg-ivory-50 border border-ivory-200 focus:bg-white focus:border-nile-600 outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <input type="password" id="loginPassword" required placeholder="كلمة المرور" 
+                            class="w-full px-4 py-3.5 rounded-2xl bg-ivory-50 border border-ivory-200 focus:bg-white focus:border-nile-600 outline-none text-sm transition">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 bg-nile-600 hover:bg-nile-700 text-white font-bold rounded-2xl shadow-md transition text-base">
+                        تسجيل الدخول (حقيقي)
+                    </button>
+                </form>
+
+                <!-- نموذج إنشاء حساب جديد -->
+                <form id="registerForm" onsubmit="handleFirebaseRegister(event)" class="hidden space-y-3.5">
+                    <div class="flex flex-col items-center bg-ivory-50 p-3.5 rounded-2xl border border-ivory-200">
+                        <div class="relative group cursor-pointer" onclick="document.getElementById('regAvatarFile').click()">
+                            <img id="regAvatarPreview" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" alt="معاينة" class="w-20 h-20 rounded-2xl object-cover border-2 border-desert-500 shadow-md">
+                        </div>
+                        <input type="file" id="regAvatarFile" accept="image/*" class="hidden" onchange="handleRegAvatarUpload(event)">
+                        <button type="button" onclick="document.getElementById('regAvatarFile').click()" class="mt-2.5 text-xs font-extrabold text-nile-600 hover:underline">اختر صورتك الشخصية</button>
+                    </div>
+                    <div>
+                        <input type="text" id="regFullName" required placeholder="الاسم الكامل (مثال: طارق ود النيل)" 
+                            class="w-full px-4 py-3 rounded-2xl bg-ivory-50 border border-ivory-200 focus:bg-white focus:border-nile-600 outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <input type="email" id="regEmail" required placeholder="البريد الإلكتروني" 
+                            class="w-full px-4 py-3 rounded-2xl bg-ivory-50 border border-ivory-200 focus:bg-white focus:border-nile-600 outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <input type="password" id="regPassword" required placeholder="كلمة المرور (6 أحرف أو أكثر)" 
+                            class="w-full px-4 py-3 rounded-2xl bg-ivory-50 border border-ivory-200 focus:bg-white focus:border-nile-600 outline-none text-sm transition">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold rounded-2xl shadow-sm transition text-base">
+                        إنشاء حساب حقيقي في Firebase
+                    </button>
+                    <button type="button" onclick="toggleAuthMode('login')" class="w-full text-xs text-nile-600 hover:underline font-bold pt-1">
+                        عندك حساب؟ رجوع لتسجيل الدخول
+                    </button>
+                </form>
+
+                <hr class="my-5 border-ivory-200">
+
+                <div class="flex flex-col gap-2.5">
+                    <button type="button" id="createAccountBtn" onclick="toggleAuthMode('register')" class="w-full py-3 bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold rounded-2xl transition text-sm shadow-sm">
+                        إنشاء حساب جديد
+                    </button>
+                    <button type="button" onclick="backToSplash()" class="w-full py-2 text-muted hover:text-ink text-xs font-semibold transition">
+                        ← الرجوع لشاشة البداية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. واجهة تطبيق "حنكك" -->
+    <div id="mainAppScreen" class="hidden screen-transition opacity-0 bg-ivory-100 nubian-pattern min-h-screen pb-16 md:pb-6">
+        <div class="fixed top-0 inset-x-0 nubian-border-top z-50"></div>
+
+        <header class="sticky top-2 z-40 max-w-[1440px] mx-auto px-2 sm:px-4 pt-1">
+            <div class="bg-white/90 backdrop-blur-md shadow-md border border-ivory-200 rounded-2xl sm:rounded-3xl h-16 px-3 sm:px-5 flex items-center justify-between">
+                <div class="flex items-center gap-2.5 sm:gap-3.5">
+                    <a href="#" onclick="resetFeed(event)" class="flex items-center gap-2.5 group">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-nile-600 to-nile-900 flex items-center justify-center text-white shadow-md ring-2 ring-desert-500/40">
+                            <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 100 100"><path d="M22 16C22 13.7909 23.7909 12 26 12H36C38.2091 12 40 13.7909 40 16V41H60V16C60 13.7909 61.7909 12 64 12H74C76.2091 12 78 13.7909 78 16V84C78 86.2091 76.2091 88 74 88H64C61.7909 88 60 86.2091 60 84V57H40V84C40 86.2091 38.2091 88 36 88H26C23.7909 88 22 86.2091 22 84V16Z"/></svg>
+                        </div>
+                        <div class="hidden sm:block">
+                            <span class="text-xl font-black text-nile-600 tracking-tight block leading-none">حنكك</span>
+                            <span class="text-[10px] font-bold text-desert-600">مجتمع السودان</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-1.5 sm:gap-2.5">
+                    <div class="relative">
+                        <button type="button" onclick="toggleDropdown('accountDropdown')" class="flex items-center gap-2 bg-ivory-100 hover:bg-ivory-200 border border-ivory-200 p-1 pl-2.5 rounded-2xl transition-colors">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" alt="المستخدم" class="user-avatar-sync w-8 h-8 rounded-xl object-cover">
+                            <span id="navUserName" class="font-bold text-xs hidden sm:block text-ink">طارق</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-muted"></i>
+                        </button>
+                        <div id="accountDropdown" class="hidden absolute left-0 mt-2.5 w-64 bg-white rounded-3xl shadow-2xl border border-ivory-200 overflow-hidden z-50">
+                            <div class="nubian-border-top"></div>
+                            <div class="p-2.5">
+                                <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-ivory-100 mb-2">
+                                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" alt="المستخدم" class="user-avatar-sync w-10 h-10 rounded-xl object-cover">
+                                    <div class="min-w-0">
+                                        <p id="dropdownUserFullName" class="font-extrabold text-sm text-ink truncate">طارق ود النيل</p>
+                                        <p id="dropdownUserEmail" class="text-[11px] text-desert-600 font-semibold truncate">user@gmail.com</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="handleFirebaseLogout()" class="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-terracotta-50 text-terracotta-600 text-xs font-extrabold transition-colors text-right mt-1">
+                                    <div class="w-8 h-8 rounded-xl bg-terracotta-100 text-terracotta-600 flex items-center justify-center"><i class="fa-solid fa-right-from-bracket"></i></div>
+                                    <span>تسجيل الخروج</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-[1440px] mx-auto px-2 sm:px-4 pt-5 flex justify-between gap-5">
+            <main class="flex-1 max-w-[660px] mx-auto w-full">
+                <!-- صندوق إنشاء منشور جديد مرتبط بقاعدة بيانات Firestore -->
+                <section class="bg-white rounded-3xl shadow-sm mb-5 border border-ivory-200 overflow-hidden">
+                    <div class="nubian-border-top"></div>
+                    <div class="p-4">
+                        <div class="flex items-start gap-3">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" alt="المستخدم" class="user-avatar-sync w-11 h-11 rounded-2xl object-cover border border-ivory-200">
+                            <div class="flex-1">
+                                <textarea id="postInput" rows="2" placeholder="بشنو بتفكر الليلة؟ ارمي حنكك هنا..." 
+                                          class="w-full bg-ivory-50 focus:bg-white focus:ring-2 focus:ring-nile-600/20 border border-ivory-200 rounded-2xl px-4 py-3 text-sm outline-none resize-none transition-all"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 mt-3 border-t border-ivory-100">
+                            <span class="text-xs text-muted font-bold">الحفظ مباشر في قاعدة البيانات ☁️</span>
+                            <button type="button" onclick="createNewFirestorePost()" class="bg-gradient-to-l from-nile-600 to-nile-700 hover:from-nile-700 text-white font-bold px-5 py-2.5 rounded-2xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+                                <span>انشر الحنك</span>
+                                <i class="fa-solid fa-paper-plane text-xs text-desert-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- خلاصة الديوان -->
+                <section id="newsFeed" class="space-y-5">
+                    <p class="text-center text-stone-500 py-6">جاري تحميل الحناكيش من قاعدة البيانات...</p>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-16 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- برمجة Firebase وربط التطبيق -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase.app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase.auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase.firestore.js";
+
+        // إعدادات الـ Firebase الخاصة بك
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAH_ZVWIugP5j-TigMV8N-_rnayzdq2XQ",
+            authDomain: "hanakakapp.firebaseapp.com",
+            projectId: "hanakakapp",
+            storageBucket: "hanakakapp.firebasestorage.app",
+            messagingSenderId: "1071372681021",
+            appId: "1:1071372681021:web:0cf52edf64e7784a174f54"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUserData = { name: "طارق ود النيل", email: "", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" };
+        let pendingRegAvatar = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80";
+
+        // مراقبة حالة المستخدم
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserData.name = user.displayName || user.email.split('@')[0];
+                currentUserData.email = user.email;
+                if(user.photoURL) currentUserData.avatar = user.photoURL;
+
+                document.getElementById('navUserName').textContent = currentUserData.name;
+                document.getElementById('dropdownUserFullName').textContent = currentUserData.name;
+                document.getElementById('dropdownUserEmail').textContent = currentUserData.email;
+                document.querySelectorAll('.user-avatar-sync').forEach(el => el.src = currentUserData.avatar);
+
+                document.getElementById('splashScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainAppScreen').classList.remove('hidden');
+                document.getElementById('mainAppScreen').classList.remove('opacity-0');
+                
+                loadFirestorePosts();
+            } else {
+                document.getElementById('mainAppScreen').classList.add('hidden');
+                document.getElementById('splashScreen').classList.remove('hidden');
+                startLoadingSequence();
+            }
+        });
+
+        // تسجيل الدخول الحقيقي
+        window.handleFirebaseLogin = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("أهلاً بك مجدداً في حنكك ☕");
+            } catch (error) {
+                alert("خطأ في تسجيل الدخول: " + error.message);
+            }
+        };
+
+        // إنشاء حساب جديد حقيقي
+        window.handleFirebaseRegister = async function(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regFullName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential.user, {
+                    displayName: fullName,
+                    photoURL: pendingRegAvatar
+                });
+                showToast("تم إنشاء الحساب بنجاح يا زول! مرحباً بك 🇸🇩");
+            } catch (error) {
+                alert("خطأ في إنشاء الحساب: " + error.message);
+            }
+        };
+
+        // تسجيل الخروج
+        window.handleFirebaseLogout = function() {
+            signOut(auth);
+            showToast("في أمان الله..");
+        };
+
+        // نشر منشور جديد في Firestore
+        window.createNewFirestorePost = async function() {
+            const contentInput = document.getElementById('postInput');
+            const content = contentInput.value.trim();
+            if(!content) return;
+
+            try {
+                await addDoc(collection(db, "posts"), {
+                    content: content,
+                    author: currentUserData.name,
+                    email: currentUserData.email,
+                    avatar: currentUserData.avatar,
+                    time: "الآن",
+                    createdAt: new Date()
+                });
+                contentInput.value = "";
+                loadFirestorePosts();
+                showToast("تم نشر الحنك في قاعدة البيانات بنجاح 🔥");
+            } catch (error) {
+                alert("خطأ في النشر: " + error.message);
+            }
+        };
+
+        // جلب المنشورات من قاعدة بيانات Firestore
+        async function loadFirestorePosts() {
+            const feed = document.getElementById('newsFeed');
+            try {
+                const q = query(collection(db, "posts"));
+                const querySnapshot = await getDocs(q);
+                if(querySnapshot.empty) {
+                    feed.innerHTML = `<div class="bg-white rounded-3xl p-8 text-center shadow-sm border border-ivory-200"><p class="text-ink font-bold text-sm">مافي حنك منشور لسه، ارمي أول حنك! ☕</p></div>`;
+                    return;
+                }
+                feed.innerHTML = "";
+                querySnapshot.forEach((docSnap) => {
+                    const post = docSnap.data();
+                    feed.insertAdjacentHTML('beforeend', `
+                        <article class="bg-white rounded-3xl shadow-sm border border-ivory-200 overflow-hidden mb-4">
+                            <div class="nubian-border-top opacity-75"></div>
+                            <div class="p-4 pb-2 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img src="${post.avatar || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80'}" class="w-11 h-11 rounded-2xl object-cover border border-ivory-200">
+                                    <div>
+                                        <h4 class="font-extrabold text-ink text-sm">${post.author || 'زول'}</h4>
+                                        <span class="text-[11px] text-muted">${post.time || 'قبل قليل'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 text-ink text-sm leading-relaxed font-medium">${post.content}</div>
+                        </article>
+                    `);
+                });
+            } catch (error) {
+                feed.innerHTML = `<p class='text-center text-red-500'>عذراً، فشل تحميل المنشورات من قاعدة البيانات.</p>`;
+            }
+        }
+
+        window.handleRegAvatarUpload = function(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pendingRegAvatar = e.target.result;
+                    document.getElementById('regAvatarPreview').src = pendingRegAvatar;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // دوال واجهة المستخدم الأخرى (شاشة البداية، التنقل)
+        window.startLoadingSequence = function() {
+            setTimeout(() => {
+                document.getElementById('loadingIndicator').classList.add('hidden');
+                document.getElementById('actionArea').classList.remove('hidden');
+            }, 1500);
+        };
+        window.enterLoginScreen = function() {
+            document.getElementById('splashScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.remove('opacity-0');
+        };
+        window.backToSplash = function() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('splashScreen').classList.remove('hidden');
+            startLoadingSequence();
+        };
+        window.toggleAuthMode = function(mode) {
+            if(mode === 'register') {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('createAccountBtn').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            } else {
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('createAccountBtn').classList.remove('hidden');
+            }
+        };
+        window.toggleDropdown = function(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        };
+        window.resetFeed = function(e) { if(e) e.preventDefault(); loadFirestorePosts(); };
+        window.replaySplash = function() { startLoadingSequence(); };
+        window.showToast = function(msg) {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'bg-nile-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl border border-desert-500/40';
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        };
+
+        window.onload = function() { startLoadingSequence(); };
+    </script>
+</body>
+</html>
